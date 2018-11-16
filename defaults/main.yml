@@ -1,0 +1,5 @@
+---
+
+letsencrypt_email: info@{{ hostname}}
+gen_letsencrypt_certificate: false
+

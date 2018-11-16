@@ -1,0 +1,100 @@
+---
+
+- name: Upgrade system
+  apt: 
+    upgrade: dist
+    update_cache: yes
+  when: ansible_distribution == 'Debian'
+
+- name: Install specific packages
+  package:
+    name:
+      - python-simplejson
+      - nginx
+      - letsencrypt
+      - pyOpenSSL
+
+- name: create letsencrypt directory
+  file:
+    name: /var/www/letsencrypt
+    state: directory
+
+- name: Remove default nginx config
+  file: 
+    name: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Install system nginx config
+  template:
+    src: templates/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+
+- name: create sites-enabled directory
+  file:
+    name: /etc/nginx/sites-enabled
+    state: directory
+
+- name: Install nginx site for letsencrypt requests
+  template:
+    src: templates/nginx-http.j2
+    dest: /etc/nginx/sites-enabled/http-{{ hostname }}.conf
+
+- name: Reload nginx to activate letsencrypt site
+  service: 
+    name: nginx 
+    state: restarted
+
+- name: Create letsencrypt certificate
+  shell: letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ hostname }}
+  args:
+    creates: /etc/letsencrypt/live/{{ hostname }}
+  when: gen_letsencrypt_certificate
+
+- name: Generate dhparams
+  shell: openssl dhparam -out /etc/nginx/dhparams.pem 4096
+  args:
+    creates: /etc/nginx/dhparams.pem
+
+- name: Install nginx site for specified site
+  template:
+    src: templates/nginx-le.j2
+    dest: /etc/nginx/sites-enabled/le-{{ hostname }}.conf
+
+- name: Ensure directory exists for local self-signed TLS certs.
+  file:
+    path: /etc/letsencrypt/live/{{ hostname }}
+    state: directory
+  when: not gen_letsencrypt_certificate
+
+- name: Generate an OpenSSL private key.
+  openssl_privatekey:
+    path: /etc/letsencrypt/live/{{ hostname }}/privkey.pem
+  when: not gen_letsencrypt_certificate
+
+- name: Generate an OpenSSL CSR.
+  openssl_csr:
+    path: /etc/ssl/private/{{ hostname }}.csr
+    privatekey_path: /etc/letsencrypt/live/{{ hostname }}/privkey.pem
+    common_name: "{{ hostname }}"
+  when: not gen_letsencrypt_certificate
+
+- name: Generate a Self Signed OpenSSL certificate.
+  openssl_certificate:
+    path: /etc/letsencrypt/live/{{ server_hostname }}/fullchain.pem
+    privatekey_path: /etc/letsencrypt/live/{{ server_hostname }}/privkey.pem
+    csr_path: /etc/ssl/private/{{ hostname }}.csr
+    provider: selfsigned
+  when: not gen_letsencrypt_certificate
+
+- name: Reload nginx to activate specified site
+  service: 
+    name: nginx
+    state: restarted
+
+- name: Add letsencrypt cronjob for cert renewal
+  cron:
+    name: letsencrypt_renewal
+    special_time: weekly
+    job: letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ hostname }} && service nginx reload
+  when: gen_letsencrypt_certificate
+
