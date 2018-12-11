@@ -64,19 +64,19 @@
   file:
     path: /etc/letsencrypt/live/{{ hostname }}
     state: directory
-  when: not gen_letsencrypt_certificate
+  when: gen_letsencrypt_certificate == false
 
 - name: Generate an OpenSSL private key.
   openssl_privatekey:
     path: /etc/letsencrypt/live/{{ hostname }}/privkey.pem
-  when: not gen_letsencrypt_certificate
+  when: gen_letsencrypt_certificate == false
 
 - name: Generate an OpenSSL CSR.
   openssl_csr:
     path: /etc/ssl/private/{{ hostname }}.csr
     privatekey_path: /etc/letsencrypt/live/{{ hostname }}/privkey.pem
     common_name: "{{ hostname }}"
-  when: not gen_letsencrypt_certificate
+  when: gen_letsencrypt_certificate == false
 
 - name: Generate a Self Signed OpenSSL certificate.
   openssl_certificate:
@@ -84,7 +84,7 @@
     privatekey_path: /etc/letsencrypt/live/{{ server_hostname }}/privkey.pem
     csr_path: /etc/ssl/private/{{ hostname }}.csr
     provider: selfsigned
-  when: not gen_letsencrypt_certificate
+  when: gen_letsencrypt_certificate == false
 
 - name: Reload nginx to activate specified site
   service: 
