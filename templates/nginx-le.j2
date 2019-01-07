@@ -10,13 +10,14 @@ server {
     listen 443 ssl default deferred;
     server_name {{ hostname }};
 
-    ssl on;{%
-if gen_letsencrypt_certificate == true %}
+    ssl on;
+{% if gen_letsencrypt_certificate == true %}
     ssl_certificate         /etc/letsencrypt/live/{{ hostname }}/fullchain.pem;
     ssl_certificate_key     /etc/letsencrypt/live/{{ hostname }}/privkey.pem;
     ssl_trusted_certificate /etc/letsencrypt/live/{{ hostname }}/fullchain.pem;
 {% else %}
-
+    ssl_certificate         /etc/letsencrypt/live/{{ hostname }}/fullchain.pem;
+    ssl_certificate_key     /etc/letsencrypt/live/{{ hostname }}/privkey.pem;
 {% endif %}
     ssl_session_cache shared:SSL:50m;
     ssl_session_timeout 5m;
