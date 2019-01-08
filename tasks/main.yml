@@ -37,7 +37,7 @@
 - name: Install nginx site for letsencrypt requests
   template:
     src: templates/nginx-http.j2
-    dest: /etc/nginx/sites-enabled/http-{{ dns_wiki }}.conf
+    dest: /etc/nginx/sites-enabled/http-{{ dns_name }}.conf
 
 - name: Reload nginx to activate letsencrypt site
   service: 
@@ -46,9 +46,9 @@
   when: gen_letsencrypt_certificate
 
 - name: Create letsencrypt certificate
-  shell: letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ dns_wiki }}
+  shell: letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ dns_name }}
   args:
-    creates: /etc/letsencrypt/live/{{ dns_wiki }}
+    creates: /etc/letsencrypt/live/{{ dns_name }}
   when: gen_letsencrypt_certificate
 
 - name: Generate dhparams
@@ -59,17 +59,17 @@
 - name: Install nginx site for specified site
   template:
     src: templates/nginx-le.j2
-    dest: /etc/nginx/sites-enabled/le-{{ dns_wiki }}.conf
+    dest: /etc/nginx/sites-enabled/le-{{ dns_name }}.conf
 
 - name: Ensure directory exists for local self-signed TLS certs.
   file:
-    path: /etc/letsencrypt/live/{{ dns_wiki }}
+    path: /etc/letsencrypt/live/{{ dns_name }}
     state: directory
   when: gen_letsencrypt_certificate == false
 
 - name: Generate an OpenSSL private key.
   openssl_privatekey:
-    path: /etc/letsencrypt/live/{{ dns_wiki }}/privkey.pem
+    path: /etc/letsencrypt/live/{{ dns_name }}/privkey.pem
   when: gen_letsencrypt_certificate == false
 
 - name: Ensure directory exists for local self-signed TLS certs.
@@ -80,16 +80,16 @@
 
 - name: Generate an OpenSSL CSR.
   openssl_csr:
-    path: /etc/ssl/private/{{ dns_wiki }}.csr
-    privatekey_path: /etc/letsencrypt/live/{{ dns_wiki }}/privkey.pem
-    common_name: "{{ dns_wiki }}"
+    path: /etc/ssl/private/{{ dns_name }}.csr
+    privatekey_path: /etc/letsencrypt/live/{{ dns_name }}/privkey.pem
+    common_name: "{{ dns_name }}"
   when: gen_letsencrypt_certificate == false
 
 - name: Generate a Self Signed OpenSSL certificate.
   openssl_certificate:
-    path: /etc/letsencrypt/live/{{ dns_wiki }}/fullchain.pem
-    privatekey_path: /etc/letsencrypt/live/{{ dns_wiki }}/privkey.pem
-    csr_path: /etc/ssl/private/{{ dns_wiki }}.csr
+    path: /etc/letsencrypt/live/{{ dns_name }}/fullchain.pem
+    privatekey_path: /etc/letsencrypt/live/{{ dns_name }}/privkey.pem
+    csr_path: /etc/ssl/private/{{ dns_name }}.csr
     provider: selfsigned
   when: gen_letsencrypt_certificate == false
 
@@ -102,6 +102,6 @@
   cron:
     name: letsencrypt_renewal
     special_time: weekly
-    job: letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ dns_wiki }} && service nginx reload
+    job: letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ dns_name }} && service nginx reload
   when: gen_letsencrypt_certificate
 

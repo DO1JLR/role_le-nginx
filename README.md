@@ -5,5 +5,5 @@
 Wichtig: Definiere folgende variable:
 
 ```yaml
-dns_domain
+dns_name
 ```
