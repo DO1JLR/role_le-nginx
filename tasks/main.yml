@@ -37,7 +37,7 @@
 - name: Install nginx site for letsencrypt requests
   template:
     src: templates/nginx-http.j2
-    dest: /etc/nginx/sites-enabled/http-{{ ansible_hostname }}.conf
+    dest: /etc/nginx/sites-enabled/http-{{ dns-wiki }}.conf
 
 - name: Reload nginx to activate letsencrypt site
   service: 
@@ -46,9 +46,9 @@
   when: gen_letsencrypt_certificate
 
 - name: Create letsencrypt certificate
-  shell: letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ ansible_hostname }}
+  shell: letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ dns-wiki }}
   args:
-    creates: /etc/letsencrypt/live/{{ ansible_hostname }}
+    creates: /etc/letsencrypt/live/{{ dns-wiki }}
   when: gen_letsencrypt_certificate
 
 - name: Generate dhparams
@@ -59,17 +59,17 @@
 - name: Install nginx site for specified site
   template:
     src: templates/nginx-le.j2
-    dest: /etc/nginx/sites-enabled/le-{{ ansible_hostname }}.conf
+    dest: /etc/nginx/sites-enabled/le-{{ dns-wiki }}.conf
 
 - name: Ensure directory exists for local self-signed TLS certs.
   file:
-    path: /etc/letsencrypt/live/{{ ansible_hostname }}
+    path: /etc/letsencrypt/live/{{ dns-wiki }}
     state: directory
   when: gen_letsencrypt_certificate == false
 
 - name: Generate an OpenSSL private key.
   openssl_privatekey:
-    path: /etc/letsencrypt/live/{{ ansible_hostname }}/privkey.pem
+    path: /etc/letsencrypt/live/{{ dns-wiki }}/privkey.pem
   when: gen_letsencrypt_certificate == false
 
 - name: Ensure directory exists for local self-signed TLS certs.
@@ -80,16 +80,16 @@
 
 - name: Generate an OpenSSL CSR.
   openssl_csr:
-    path: /etc/ssl/private/{{ ansible_hostname }}.csr
-    privatekey_path: /etc/letsencrypt/live/{{ ansible_hostname }}/privkey.pem
-    common_name: "{{ ansible_hostname }}"
+    path: /etc/ssl/private/{{ dns-wiki }}.csr
+    privatekey_path: /etc/letsencrypt/live/{{ dns-wiki }}/privkey.pem
+    common_name: "{{ dns-wiki }}"
   when: gen_letsencrypt_certificate == false
 
 - name: Generate a Self Signed OpenSSL certificate.
   openssl_certificate:
-    path: /etc/letsencrypt/live/{{ ansible_hostname }}/fullchain.pem
-    privatekey_path: /etc/letsencrypt/live/{{ ansible_hostname }}/privkey.pem
-    csr_path: /etc/ssl/private/{{ ansible_hostname }}.csr
+    path: /etc/letsencrypt/live/{{ dns-wiki }}/fullchain.pem
+    privatekey_path: /etc/letsencrypt/live/{{ dns-wiki }}/privkey.pem
+    csr_path: /etc/ssl/private/{{ dns-wiki }}.csr
     provider: selfsigned
   when: gen_letsencrypt_certificate == false
 
@@ -102,6 +102,6 @@
   cron:
     name: letsencrypt_renewal
     special_time: weekly
-    job: letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ ansible_hostname }} && service nginx reload
+    job: letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ dns-wiki }} && service nginx reload
   when: gen_letsencrypt_certificate
 
