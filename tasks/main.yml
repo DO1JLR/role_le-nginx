@@ -19,6 +19,12 @@
     name: /var/www/letsencrypt
     state: directory
 
+- name: create webroot directory
+  file:
+    name: /var/www/{{ dns_name }}
+    state: directory
+
+
 - name: Remove default nginx config
   file: 
     name: /etc/nginx/sites-enabled/default
