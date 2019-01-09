@@ -2,7 +2,7 @@ server_tokens off;
 
 server {
     listen 80 default_server;
-    server_name {{ hostname }};
+    server_name {{ dns_name }};
 
     location /.well-known/acme-challenge {
         root /var/www/letsencrypt;
@@ -10,7 +10,7 @@ server {
     }
 
     location / {
-        rewrite ^ https://{{ hostname }}$request_uri? permanent;
+        rewrite ^ https://{{ dns_name }}$request_uri? permanent;
     }
 }
 
