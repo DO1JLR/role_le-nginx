@@ -34,6 +34,7 @@ dns_name
 | reverse_proxy_destination | ``http://127.0.0.1:3000`` | Where should the proxy point to? |
 | nginx_default_server | ``false`` | Is this the default nginx site? (Use only once per server) |
 | nginx_aliases | ``""`` | String with aditional vhost names |
+| nginx_php | false | allow php |
 
  Example:
 ----------
