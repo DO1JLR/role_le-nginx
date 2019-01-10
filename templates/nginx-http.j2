@@ -1,7 +1,8 @@
-server_tokens off;
+{% if nginx_default_server %}server_tokens off;{% endif %}
 
 server {
-    listen 80 default_server;
+    listen 80{% if nginx_default_server %} default_server{% endif %};
+    listen [::]:80{% if nginx_default_server %} default_server{% endif %};
     server_name {{ dns_name }};
 
     location /.well-known/acme-challenge {
