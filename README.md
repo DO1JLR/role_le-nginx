@@ -28,10 +28,12 @@ dns_name
 | variable | default value | function |
 | -------- | ------------- | -------- |
 | dns_name | - | used domain name for config and certificate |
-| letsencrypt_email | info@{{ ansible_hostname }} | Lets Encrypt notify mail |
-| gen_letsencrypt_certificate | false | Generate Letsencrypt or self signed cert |
-| reverse_proxy | true | host files or be a reverse proxy |
-| reverse_proxy_destination | http://127.0.0.1:3000 | Where should the proxy point to? |
+| letsencrypt_email | ``info@{{ ansible_hostname }}`` | Lets Encrypt notify mail |
+| gen_letsencrypt_certificate | ``false`` | Generate Letsencrypt or self signed cert |
+| reverse_proxy | ``true`` | host files or be a reverse proxy |
+| reverse_proxy_destination | ``http://127.0.0.1:3000`` | Where should the proxy point to? |
+| nginx_default_server | ``false`` | Is this the default nginx site? (Use only once per server) |
+| nginx_aliases | ``""`` | String with aditional vhost names |
 
  Example:
 ----------

@@ -3,7 +3,8 @@
 server {
     listen 80{% if nginx_default_server %} default_server{% endif %};
     listen [::]:80{% if nginx_default_server %} default_server{% endif %};
-    server_name {{ dns_name }};
+    server_name {{ dns_name }}{%
+    if nginx_aliases != "" %} {{ nginx_aliases }}{% endif %};
 
     location /.well-known/acme-challenge {
         root /var/www/letsencrypt;

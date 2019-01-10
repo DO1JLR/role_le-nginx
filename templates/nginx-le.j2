@@ -9,7 +9,8 @@ add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsaf
 server {
     listen 443 ssl{% if nginx_default_server %} default{% endif %} http2;
     listen [::]:443 ssl{% if nginx_default_server %} default{% endif %} http2;
-    server_name {{ dns_name }};
+    server_name {{ dns_name }}{%
+    if nginx_aliases != "" %} {{ nginx_aliases }}{% endif %};
 
     ssl on;
 {% if gen_letsencrypt_certificate == true %}

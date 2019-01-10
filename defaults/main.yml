@@ -8,4 +8,5 @@ gen_letsencrypt_certificate: false
 reverse_proxy: true
 reverse_proxy_destination: "http://127.0.0.1:3000" 
 nginx_default_server: false
+nginx_aliases: ""
 
