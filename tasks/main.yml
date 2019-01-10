@@ -23,7 +23,7 @@
   file:
     name: /var/www/{{ dns_name }}
     state: directory
-
+    mode: "u=rwx,g=rx,o=rx"
 
 - name: Remove default nginx config
   file: 
