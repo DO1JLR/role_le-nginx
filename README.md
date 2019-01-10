@@ -13,13 +13,21 @@ dns_name
 ------------------------
 
 + Update System
-+ 
++ Install needed packages like nginx or some python modules 
 + Generate self signed SSL-Certificate or LE-Certificate
 + configure nginx to forward http to https
 + configure nginx to make a reverseproxy to Port 3000 (e.g. used for gitea)
-
++ Generate DHPARAMS (improved TLS Entropie) 
 
  Tested on:
 -----------
  + Fedora 29 Server (needs [se_firewalld](https://github.com/DO1JLR/role_se_firewalld) role for SELINUX Policy)
+
+ Variables:
+------------
+| variable | default value | function |
+| -------- | ------------- | -------- |
+| dns_name | - | used domain name for config and certificate |
+| letsencrypt_email | info@{{ ansible_hostname }} | Lets Encrypt notify mail |
+| gen_letsencrypt_certificate | false | Generate Letsencrypt or self signed cert |
 
