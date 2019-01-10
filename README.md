@@ -1,5 +1,6 @@
 # role_le-nginx
-[quick and dirty] Ansible Playbook for nginx and letsencrypt
+
+Ansible Playbook for nginx and letsencrypt
 
 
 Wichtig: Definiere folgende variable:
@@ -7,3 +8,11 @@ Wichtig: Definiere folgende variable:
 ```yaml
 dns_name
 ```
+
+ What it currently does:
+------------------------
+
++ Generate self signed SSL-Certificate or LE-Certificate
++ configure nginx to forward http to https
++ configure nginx to make a reverseproxy to Port 3000 (e.g. used for gitea)
+
