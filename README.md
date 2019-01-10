@@ -33,3 +33,21 @@ dns_name
 | reverse_proxy | true | host files or be a reverse proxy |
 | reverse_proxy_destination | http://127.0.0.1:3000 | Where should the proxy point to? |
 
+ Example:
+----------
+You can use this role multiple times for different destinations:
+
+```
+- name: nginx server for example.com
+  hosts: webserver01.example.com
+  roles:
+    - le-nginx
+  tags:
+   - web
+   - config
+  vars:
+   - dns_name: "example.com"
+   - gen_letsencrypt_certificate: false
+   - reverse_proxy_destination: http://127.0.0.1:9001
+```
+
