@@ -1,5 +1,10 @@
 ---
 
+# TLS Config:
 letsencrypt_email: info@{{ ansible_hostname }}
 gen_letsencrypt_certificate: false
+
+# Nginx config:
+reverse_proxy: true
+reverse_proxy_destination: "http://127.0.0.1:3000" 
 
