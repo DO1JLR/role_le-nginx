@@ -10,3 +10,4 @@ reverse_proxy_destination: "http://127.0.0.1:3000"
 nginx_default_server: false
 nginx_aliases: ""
 nginx_php: false
+nginx_dokuwiki: false

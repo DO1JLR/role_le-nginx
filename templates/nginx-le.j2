@@ -46,7 +46,11 @@ server {
         fastcgi_pass  127.0.0.1:9000;
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;{%
-        endif %}{% endif %}
+        endif %}{% if nginx_dokuwiki %}
     }
-    
+
+    location ~ /(data|conf|bin|inc)/ {
+        deny all; {% endif %}{% endif %}
+    }
+        
 }
