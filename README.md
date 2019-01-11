@@ -23,6 +23,8 @@ dns_name
 -----------
  + Fedora 29 Server (needs [se_firewalld](https://github.com/DO1JLR/role_se_firewalld) role for SELINUX Policy)
 
+For the PHP part of this playbook I used [this](https://github.com/DO1JLR/role_se_php) ansible role.
+
  Variables:
 ------------
 | variable | default value | function |
