@@ -103,6 +103,7 @@
   service: 
     name: nginx
     state: restarted
+    enabled: yes
 
 - name: Add letsencrypt cronjob for cert renewal
   cron:
