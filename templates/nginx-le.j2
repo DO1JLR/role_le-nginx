@@ -35,17 +35,17 @@ server {
     root /var/www/{{ dns_name }};
     index index.html index.htm;
 
-  location / {
+    location / {
         {% if reverse_proxy %} proxy_pass {{ reverse_proxy_destination }}; {%
         else %}root   /var/www/{{ dns_name }};
         index  index.html index.htm{% if nginx_php %} index.php{% endif %};{% if nginx_php %}
     }
 
     location ~ \.php$ {
-        try_files $uri =404;
-        fastcgi_pass unix:/var/run/php-fpm/www.sock;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_pass  127.0.0.1:9000;
         fastcgi_index index.php;
-        include /etc/nginx/fastcgi_params;{%
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;{%
         endif %}{% endif %}
     }
     
