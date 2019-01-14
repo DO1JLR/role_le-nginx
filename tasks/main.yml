@@ -69,13 +69,13 @@
 
 - name: Ensure directory exists for local self-signed TLS certs.
   file:
-    path: /etc/letsencrypt/live/{{ dns_name }}
+    path: /etc/letsencrypt/live/self_{{ dns_name }}
     state: directory
   when: gen_letsencrypt_certificate == false
 
 - name: Generate an OpenSSL private key.
   openssl_privatekey:
-    path: /etc/letsencrypt/live/{{ dns_name }}/privkey.pem
+    path: /etc/letsencrypt/live/self_{{ dns_name }}/privkey.pem
   when: gen_letsencrypt_certificate == false
 
 - name: Ensure directory exists for local self-signed TLS certs.
@@ -87,16 +87,24 @@
 - name: Generate an OpenSSL CSR.
   openssl_csr:
     path: /etc/ssl/private/{{ dns_name }}.csr
-    privatekey_path: /etc/letsencrypt/live/{{ dns_name }}/privkey.pem
+    privatekey_path: /etc/letsencrypt/live/self_{{ dns_name }}/privkey.pem
     common_name: "{{ dns_name }}"
   when: gen_letsencrypt_certificate == false
 
 - name: Generate a Self Signed OpenSSL certificate.
   openssl_certificate:
-    path: /etc/letsencrypt/live/{{ dns_name }}/fullchain.pem
-    privatekey_path: /etc/letsencrypt/live/{{ dns_name }}/privkey.pem
+    path: /etc/letsencrypt/live/self_{{ dns_name }}/fullchain.pem
+    privatekey_path: /etc/letsencrypt/live/self_{{ dns_name }}/privkey.pem
     csr_path: /etc/ssl/private/{{ dns_name }}.csr
     provider: selfsigned
+  when: gen_letsencrypt_certificate == false
+
+- name: create symbolic link in case of le needs it
+  file: 
+    path: "/etc/letsencrypt/live/{{ dns_name }}"
+    src: "/etc/letsencrypt/live/{{ dns_name }}-0001"
+    state: link 
+    force: yes
   when: gen_letsencrypt_certificate == false
 
 - name: Reload nginx to activate specified site
@@ -109,6 +117,6 @@
   cron:
     name: letsencrypt_renewal
     special_time: weekly
-    job: letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ dns_name }} && service nginx reload
+    job: letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ dns_name }} && systemctl restart nginx.service
   when: gen_letsencrypt_certificate
 
