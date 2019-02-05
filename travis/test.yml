@@ -5,3 +5,4 @@
     - travis_test
   vars:
     dns_name: example.com
+    skip_dhaparam: true

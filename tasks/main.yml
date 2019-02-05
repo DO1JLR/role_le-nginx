@@ -66,6 +66,7 @@
   shell: openssl dhparam -out /etc/nginx/dhparams.pem 4096
   args:
     creates: /etc/nginx/dhparams.pem
+  when: skip_dhparam == false
 
 - name: Install nginx site for specified site
   template:

@@ -11,3 +11,4 @@ nginx_default_server: false
 nginx_aliases: ""
 nginx_php: false
 nginx_dokuwiki: false
+skip_dhparam: false
