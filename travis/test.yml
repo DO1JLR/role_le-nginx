@@ -3,3 +3,5 @@
 
   roles:
     - travis_test
+  vars:
+    dns_name: example.com
