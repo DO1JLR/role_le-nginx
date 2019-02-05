@@ -12,6 +12,7 @@
       - python-simplejson
       - nginx
       - letsencrypt
+      - python3-pip
 
 - name: Install pyOpenSSL (PIP
   pip:
