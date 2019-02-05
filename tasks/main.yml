@@ -12,7 +12,18 @@
       - python-simplejson
       - nginx
       - letsencrypt
+
+- name: Install os-specific package [RHEL]
+  package:
+    name: 
       - pyOpenSSL
+  when: ansible_distribution != 'Debian' or ansible_distribution != 'Ubuntu'
+
+- name: Install os-specific package [Debian]
+  apt:
+    name: 
+      - python3-openssl
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: create letsencrypt directory
   file:
