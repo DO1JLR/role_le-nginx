@@ -38,7 +38,12 @@ server {
     location / {
         {% if reverse_proxy %} proxy_pass {{ reverse_proxy_destination }}; {%
         else %}root   /var/www/{{ dns_name }};
-        index  index.html index.htm{% if nginx_php %} index.php{% endif %};{% if nginx_php %}
+        index  index.html index.htm{% if nginx_php %} index.php{% endif %};{% if nginx_php %}{%
+        if basic_auth %}
+
+        auth_basic            "{{ htpasswd.name }}";
+        auth_basic_user_file  /var/www/{{ dns-name }}/.htpasswd;
+        %} endif %}
     }
 
     location ~ \.php$ {
