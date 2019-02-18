@@ -12,6 +12,11 @@
       - python-simplejson
       - nginx
       - letsencrypt
+      - python3-pip
+
+- name: Install pyOpenSSL (PIP
+  pip:
+    name: 
       - pyOpenSSL
 
 - name: install packages for basic auth
@@ -81,6 +86,7 @@
   shell: openssl dhparam -out /etc/nginx/dhparams.pem 4096
   args:
     creates: /etc/nginx/dhparams.pem
+  when: skip_dhparam == false
 
 - name: Install nginx site for specified site
   template:

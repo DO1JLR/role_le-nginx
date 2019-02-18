@@ -11,6 +11,7 @@ nginx_default_server: false
 nginx_aliases: ""
 nginx_php: false
 nginx_dokuwiki: false
+skip_dhparam: false
 
 # nginx basic auth
 basic_auth: false
@@ -22,3 +23,4 @@ htpasswd:
   ipmandatory: false
   deny:
   - '192.168.1.0/22'
+
