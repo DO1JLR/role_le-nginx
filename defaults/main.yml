@@ -16,5 +16,9 @@ nginx_dokuwiki: false
 basic_auth: false
 htpasswd:
   name: alice
-#  pw: 'write your passwd here'
-
+  pw: 'write your passwd here'
+  welcome: 'You need to login!'
+  ipacl: true
+  ipmandatory: false
+  deny:
+  - '192.168.1.0/22'

@@ -37,13 +37,26 @@ server {
 
     location / {
         {% if reverse_proxy %} proxy_pass {{ reverse_proxy_destination }}; {%
+        if basic_auth %}{% if htpasswd['ipacl'] %}
+        satisfy {% if htpasswd.ipmandatory %}all{% else %}any{% endif %};    
+
+        {% for ip in htpasswd.deny %}
+        deny {{ ip }};
+        {% endfor %}
+        allow 192.168.11.1/24;
+        allow 127.0.0.1;
+        deny  all;
+        {% endif %}
+        auth_basic            "{{ htpasswd.welcome }}";
+        auth_basic_user_file  /var/www/{{ dns_name }}/.htpasswd;
+        {% endif %}{%
         else %}root   /var/www/{{ dns_name }};
         index  index.html index.htm{% if nginx_php %} index.php{% endif %};{% if nginx_php %}{%
         if basic_auth %}
 
-        auth_basic            "{{ htpasswd.name }}";
-        auth_basic_user_file  /var/www/{{ dns-name }}/.htpasswd;
-        %} endif %}
+        auth_basic            "{{ htpasswd.welcome }}";
+        auth_basic_user_file  /var/www/{{ dns_name }}/.htpasswd;
+        {% endif %}
     }
 
     location ~ \.php$ {
