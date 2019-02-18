@@ -38,6 +38,9 @@ For the PHP part of this playbook I used [this](https://github.com/DO1JLR/role_s
 | nginx_aliases | ``""`` | String with aditional vhost names |
 | nginx_php | ``false?? | enable php config |
 | nginx_dokuwiki | ``false`` | enable custom dokuwiki config |
+| basic_auth     | ``false`` | authentification via basic auth? |
+| htpasswd.name  | ``alice`` | default basic auth name |
+| htpasswd.pw    | - | basic auth password |
 
 
  Example:

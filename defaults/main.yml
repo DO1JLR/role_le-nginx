@@ -6,9 +6,21 @@ gen_letsencrypt_certificate: false
 
 # Nginx config:
 reverse_proxy: true
-reverse_proxy_destination: "http://127.0.0.1:3000" 
+reverse_proxy_destination: "http://127.0.0.1:3000/" 
 nginx_default_server: false
 nginx_aliases: ""
 nginx_php: false
 nginx_dokuwiki: false
 skip_dhparam: false
+
+# nginx basic auth
+basic_auth: false
+htpasswd:
+  name: alice
+  pw: 'write your passwd here'
+  welcome: 'You need to login!'
+  ipacl: true
+  ipmandatory: false
+  deny:
+  - '192.168.1.0/22'
+

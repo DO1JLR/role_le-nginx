@@ -19,6 +19,26 @@
     name: 
       - pyOpenSSL
 
+- name: install packages for basic auth
+  apt:
+    name: 
+    - apache2-tools
+    - python-passlib
+    - python3-passlib
+  when: 
+    - ansible_distribution == 'Debian'
+    - basic_auth
+
+- name: install packages for basic auth
+  dnf:
+    name: 
+    - httpd-tools
+    - python3-passlib
+    - python2-passlib
+  when: 
+    - ansible_distribution == 'Fedora'
+    - basic_auth
+
 - name: create letsencrypt directory
   file:
     name: /var/www/letsencrypt
@@ -112,6 +132,17 @@
     state: link 
     force: yes
   when: gen_letsencrypt_certificate == false
+
+- name: generate basic auth pw
+  htpasswd:
+    path: /var/www/{{ dns_name }}/.htpasswd
+    name: "{{ htpasswd.name }}"
+    password: "{{ htpasswd.pw }}"
+    owner: root
+    group: nginx
+    mode: 0640
+  when: 
+    - basic_auth
 
 - name: Reload nginx to activate specified site
   service: 
