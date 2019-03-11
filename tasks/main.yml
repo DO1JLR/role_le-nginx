@@ -1,25 +1,29 @@
 ---
 
 - name: Upgrade system
+  become: yes
   apt: 
     upgrade: dist
     update_cache: yes
   when: ansible_distribution == 'Debian'
 
 - name: Install specific packages
+  become: yes
   package:
     name:
       - python-simplejson
       - nginx
       - letsencrypt
-      - python3-pip
+      - python-pip
 
 - name: Install pyOpenSSL (PIP
+  become: yes
   pip:
     name: 
       - pyOpenSSL
 
 - name: install packages for basic auth
+  become: yes
   apt:
     name: 
     - apache2-tools
@@ -30,6 +34,7 @@
     - basic_auth
 
 - name: install packages for basic auth
+  become: yes
   dnf:
     name: 
     - httpd-tools
@@ -40,32 +45,38 @@
     - basic_auth
 
 - name: create letsencrypt directory
+  become: yes
   file:
     name: /var/www/letsencrypt
     state: directory
 
 - name: create webroot directory
+  become: yes
   file:
     name: /var/www/{{ dns_name }}
     state: directory
     mode: "u=rwx,g=rx,o=rx"
 
 - name: Remove default nginx config
+  become: yes
   file: 
     name: /etc/nginx/sites-enabled/default
     state: absent
 
 - name: Install system nginx config
+  become: yes
   template:
     src: templates/nginx.conf.j2
     dest: /etc/nginx/nginx.conf
 
 - name: create sites-enabled directory
+  become: yes
   file:
     name: /etc/nginx/sites-enabled
     state: directory
 
 - name: Install nginx site for letsencrypt requests
+  become: yes
   template:
     src: templates/nginx-http.j2
     dest: /etc/nginx/sites-enabled/http-{{ dns_name }}.conf
@@ -74,43 +85,51 @@
   service: 
     name: nginx 
     state: restarted
+  become: yes
   when: gen_letsencrypt_certificate
 
 - name: Create letsencrypt certificate
+  become: yes
   shell: letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ dns_name }}
   args:
     creates: /etc/letsencrypt/live/{{ dns_name }}
   when: gen_letsencrypt_certificate
 
 - name: Generate dhparams
+  become: yes
   shell: openssl dhparam -out /etc/nginx/dhparams.pem 4096
   args:
     creates: /etc/nginx/dhparams.pem
   when: skip_dhparam == false
 
 - name: Install nginx site for specified site
+  become: yes
   template:
     src: templates/nginx-le.j2
     dest: /etc/nginx/sites-enabled/le-{{ dns_name }}.conf
 
 - name: Ensure directory exists for local self-signed TLS certs.
+  become: yes
   file:
     path: /etc/letsencrypt/live/self_{{ dns_name }}
     state: directory
   when: gen_letsencrypt_certificate == false
 
 - name: Generate an OpenSSL private key.
+  become: yes
   openssl_privatekey:
     path: /etc/letsencrypt/live/self_{{ dns_name }}/privkey.pem
   when: gen_letsencrypt_certificate == false
 
 - name: Ensure directory exists for local self-signed TLS certs.
+  become: yes
   file:
     path: /etc/ssl/private
     state: directory
   when: gen_letsencrypt_certificate == false
 
 - name: Generate an OpenSSL CSR.
+  become: yes
   openssl_csr:
     path: /etc/ssl/private/{{ dns_name }}.csr
     privatekey_path: /etc/letsencrypt/live/self_{{ dns_name }}/privkey.pem
@@ -118,6 +137,7 @@
   when: gen_letsencrypt_certificate == false
 
 - name: Generate a Self Signed OpenSSL certificate.
+  become: yes
   openssl_certificate:
     path: /etc/letsencrypt/live/self_{{ dns_name }}/fullchain.pem
     privatekey_path: /etc/letsencrypt/live/self_{{ dns_name }}/privkey.pem
@@ -126,14 +146,17 @@
   when: gen_letsencrypt_certificate == false
 
 - name: create symbolic link in case of le needs it
+  become: yes
   file: 
     path: "/etc/letsencrypt/live/{{ dns_name }}"
     src: "/etc/letsencrypt/live/{{ dns_name }}-0001"
     state: link 
     force: yes
+    follow: false
   when: gen_letsencrypt_certificate == false
 
 - name: generate basic auth pw
+  become: yes
   htpasswd:
     path: /var/www/{{ dns_name }}/.htpasswd
     name: "{{ htpasswd.name }}"
@@ -145,12 +168,14 @@
     - basic_auth
 
 - name: Reload nginx to activate specified site
+  become: yes
   service: 
     name: nginx
     state: restarted
     enabled: yes
 
 - name: Add letsencrypt cronjob for cert renewal
+  become: yes
   cron:
     name: letsencrypt_renewal
     special_time: weekly
