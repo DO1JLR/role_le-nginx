@@ -13,8 +13,14 @@
     name:
       - python-simplejson
       - nginx
-      - letsencrypt
       - python-pip
+
+- name: Install specific packages
+  become: yes
+  package:
+    name:
+      - letsencrypt
+  when: gen_letsencrypt_certificate
 
 - name: Install pyOpenSSL (PIP
   become: yes
