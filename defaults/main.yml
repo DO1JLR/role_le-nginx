@@ -11,7 +11,7 @@ nginx_default_server: false
 nginx_aliases: ""
 nginx_php: false
 nginx_dokuwiki: false
-skip_dhparam: false
+skip_dhparam: true
 
 # nginx basic auth
 basic_auth: false

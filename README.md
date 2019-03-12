@@ -1,9 +1,10 @@
-# role_le-nginx
-
+ Ansible role le-nginx
+==========================
+[![Build Status](https://travis-ci.org/DO1JLR/role_le-nginx.svg?branch=master)](https://travis-ci.org/DO1JLR/role_le-nginx)
 Ansible Playbook for nginx and letsencrypt
 
 
-Wichtig: Definiere folgende variable:
+### Wichtig: Definiere folgende variable:
 
 ```yaml
 dns_name
@@ -27,27 +28,28 @@ For the PHP part of this playbook I used [this](https://github.com/DO1JLR/role_s
 
  Variables:
 ------------
-| variable | default value | function |
-| -------- | ------------- | -------- |
-| dns_name | - | used domain name for config and certificate |
+| variable          | default value | function |
+| --------          | ------------- | -------- |
+| dns_name          | -  | used domain name for config and certificate |
 | letsencrypt_email | ``info@{{ ansible_hostname }}`` | Lets Encrypt notify mail |
 | gen_letsencrypt_certificate | ``false`` | Generate Letsencrypt or self signed cert |
-| reverse_proxy | ``true`` | host files or be a reverse proxy |
+| skip_dhaparam     | ``true`` | Should we skip generating good crypto? **NOT RECOMENDED** |
+| reverse_proxy     | ``true`` | host files or be a reverse proxy |
 | reverse_proxy_destination | ``http://127.0.0.1:3000`` | Where should the proxy point to? |
 | nginx_default_server | ``false`` | Is this the default nginx site? (Use only once per server) |
-| nginx_aliases | ``""`` | String with aditional vhost names |
-| nginx_php | ``false?? | enable php config |
-| nginx_dokuwiki | ``false`` | enable custom dokuwiki config |
-| basic_auth     | ``false`` | authentification via basic auth? |
-| htpasswd.name  | ``alice`` | default basic auth name |
-| htpasswd.pw    | - | basic auth password |
+| nginx_aliases     | ``""`` | String with aditional vhost names |
+| nginx_php         | ``false`` | enable php config |
+| nginx_dokuwiki    | ``false`` | enable custom dokuwiki config |
+| basic_auth        | ``false`` | authentification via basic auth? |
+| htpasswd.name     | ``alice`` | default basic auth name |
+| htpasswd.pw       | - | basic auth password |
 
 
  Example:
 ----------
 You can use this role multiple times for different destinations:
 
-```
+```yaml
 - name: nginx server for example.com
   hosts: webserver01.example.com
   roles:
@@ -58,6 +60,7 @@ You can use this role multiple times for different destinations:
   vars:
    - dns_name: "example.com"
    - gen_letsencrypt_certificate: false
-   - reverse_proxy_destination: http://127.0.0.1:9001
+   - skip_dhparam: false
+   - reverse_proxy_destination: http://127.0.0.1:8443
 ```
 
