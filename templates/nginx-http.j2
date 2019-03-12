@@ -11,8 +11,10 @@ server {
         try_files $uri $uri/ =404;
     }
 
-    location / {
-        rewrite ^ https://{{ dns_name }}$request_uri? permanent;
+    location / { {%
+      if http_make_proxy and reverse_proxy %}
+        proxy_pass {{ reverse_proxy_destination }}; {% else %}
+        rewrite ^ https://{{ dns_name }}$request_uri? permanent;{% endif %}
     }
 }
 
