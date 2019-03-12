@@ -1,8 +1,11 @@
 ---
-- hosts: all
 
-  roles:
-    - travis_test
+- name: run travis tests
+  hosts: all
   vars:
     dns_name: example.com
     skip_dhaparam: true
+  roles:
+    - travis_test
+
+
