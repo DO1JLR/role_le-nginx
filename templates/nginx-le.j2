@@ -13,7 +13,7 @@ server {
     if nginx_aliases != "" %} {{ nginx_aliases }}{% endif %};
 
     ssl on;
-{% if gen_letsencrypt_certificate == true %}
+{% if gen_letsencrypt_certificate == true and copy_own_certificate == false %}
     ssl_certificate         /etc/letsencrypt/live/{{ dns_name }}/fullchain.pem;
     ssl_certificate_key     /etc/letsencrypt/live/{{ dns_name }}/privkey.pem;
     ssl_trusted_certificate /etc/letsencrypt/live/{{ dns_name }}/fullchain.pem;

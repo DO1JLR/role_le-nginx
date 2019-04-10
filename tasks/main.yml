@@ -131,7 +131,7 @@
    - gen_letsencrypt_certificate == false
    - copy_own_certificate == false
 
-- name: copy you own custom tls certificate
+- name: copy you own custom tls certificate (optional including intermdia ca)
   become: yes
   copy:
     src: "{{ le_custom_certificate }}"
@@ -141,19 +141,6 @@
     mode: 0600
   when: 
     - copy_own_certificate
-
-- name: copy you IntermediateCA if needed
-  become: yes
-  copy:
-    src: "{{ le_custom_intermediate }}"
-    dest: "/etc/letsencrypt/live/self_{{ dns_name }}/intermediate.pem"
-    owner: root
-    group: root
-    mode: 0600
-  when: 
-    - copy_own_certificate
-    - le_custom_intermediate is defined
-
 
 - name: Ensure directory exists for local self-signed TLS certs.
   become: yes

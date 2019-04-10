@@ -29,7 +29,6 @@ htpasswd:
 http_make_proxy: false
 
 # copy you own custom certificate to the webserver
-# le_custom_certificate: 'certificate.crt'
+# le_custom_certificate: 'certificate.crt' # this file should include the intermediate certificate too!
 # le_custom_privatekey: 'private_key.pem'
-# le_custom_intermediate: 'optional_intermediate_certificate.crt'
 
