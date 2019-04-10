@@ -3,6 +3,7 @@
 # TLS Config:
 letsencrypt_email: info@{{ ansible_hostname }}
 gen_letsencrypt_certificate: false
+copy_own_certificate: false
 
 # Nginx config:
 reverse_proxy: true
@@ -26,4 +27,9 @@ htpasswd:
 
 # make proxy on http site
 http_make_proxy: false
+
+# copy you own custom certificate to the webserver
+# le_custom_certificate: 'certificate.crt'
+# le_custom_privatekey: 'private_key.pem'
+# le_custom_intermediate: 'optional_intermediate_certificate.crt'
 

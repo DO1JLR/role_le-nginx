@@ -99,7 +99,9 @@
   shell: letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ dns_name }}
   args:
     creates: /etc/letsencrypt/live/{{ dns_name }}
-  when: gen_letsencrypt_certificate
+  when: 
+   - gen_letsencrypt_certificate
+   - copy_own_certificate == false
 
 - name: Generate dhparams
   become: yes
@@ -119,20 +121,46 @@
   file:
     path: /etc/letsencrypt/live/self_{{ dns_name }}
     state: directory
-  when: gen_letsencrypt_certificate == false
+  when: gen_letsencrypt_certificate == false or copy_own_certificate
 
 - name: Generate an OpenSSL private key.
   become: yes
   openssl_privatekey:
     path: /etc/letsencrypt/live/self_{{ dns_name }}/privkey.pem
-  when: gen_letsencrypt_certificate == false
+  when: 
+   - gen_letsencrypt_certificate == false
+   - copy_own_certificate == false
+
+- name: copy you own custom tls certificate
+  become: yes
+  copy:
+    src: "{{ le_custom_certificate }}"
+    dest: "/etc/letsencrypt/live/self_{{ dns_name }}/fullchain.pem"
+    owner: root
+    group: root
+    mode: 0600
+  when: 
+    - copy_own_certificate
+
+- name: copy you IntermediateCA if needed
+  become: yes
+  copy:
+    src: "{{ le_custom_intermediate }}"
+    dest: "/etc/letsencrypt/live/self_{{ dns_name }}/intermediate.pem"
+    owner: root
+    group: root
+    mode: 0600
+  when: 
+    - copy_own_certificate
+    - le_custom_intermediate is defined
+
 
 - name: Ensure directory exists for local self-signed TLS certs.
   become: yes
   file:
     path: /etc/ssl/private
     state: directory
-  when: gen_letsencrypt_certificate == false
+  when: gen_letsencrypt_certificate == false or copy_own_certificate
 
 - name: Generate an OpenSSL CSR.
   become: yes
@@ -140,7 +168,9 @@
     path: /etc/ssl/private/{{ dns_name }}.csr
     privatekey_path: /etc/letsencrypt/live/self_{{ dns_name }}/privkey.pem
     common_name: "{{ dns_name }}"
-  when: gen_letsencrypt_certificate == false
+  when: 
+    - gen_letsencrypt_certificate == false
+    - copy_own_certificate == false
 
 - name: Generate a Self Signed OpenSSL certificate.
   become: yes
@@ -151,6 +181,17 @@
     provider: selfsigned
   when: gen_letsencrypt_certificate == false
 
+- name: copy you own custom tls certificate
+  become: yes
+  copy:
+    src: "{{ le_custom_privatekey }}"
+    dest: "/etc/letsencrypt/live/self_{{ dns_name }}/privkey.pem"
+    owner: root
+    group: root
+    mode: 0600
+  when:
+    - copy_own_certificate 
+
 - name: create symbolic link in case of le needs it
   become: yes
   file: 
@@ -159,7 +200,9 @@
     state: link 
     force: yes
     follow: false
-  when: gen_letsencrypt_certificate == false
+  when: 
+    - gen_letsencrypt_certificate == false
+    - copy_own_certificate == false
 
 - name: generate basic auth pw
   become: yes
