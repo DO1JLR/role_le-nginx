@@ -22,7 +22,8 @@ dns_name
 
  Tested on:
 -----------
- + Fedora 29 Server (needs [se_firewalld](https://github.com/DO1JLR/role_se_firewalld) role for SELINUX Policy)
+ + Fedora 29 Server (may need [se_firewalld](https://github.com/DO1JLR/role_se_firewalld) role for SELINUX Policy)
+ + Debian 9 (no dependencies)
 
 For the PHP part of this playbook I used [this](https://github.com/DO1JLR/role_se_php) ansible role.
 
