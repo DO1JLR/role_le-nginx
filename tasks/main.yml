@@ -14,6 +14,7 @@
       - nginx
       - python-pip
       - python3-pip
+      - python3-openssl
 
 - name: Install specific packages
   become: yes
@@ -22,12 +23,12 @@
       - letsencrypt
   when: gen_letsencrypt_certificate|bool
 
-- name: Install pyOpenSSL (PIP
-  become: yes
-  pip:
-    name: 
-      - pyOpenSSL
-    executable: pip3
+#- name: Install pyOpenSSL (PIP
+#  become: yes
+#  pip:
+#    name: 
+#      - pyOpenSSL
+#    executable: pip3
 
 - name: install packages for basic auth
   become: yes
