@@ -33,7 +33,9 @@ server {
     %}ssl_dhparam /etc/nginx/dhparams.pem;
     ssl_prefer_server_ciphers on;
 
-    root /var/www/{{ dns_name }};
+    {% if custom_root|bool %}
+    root {{ custom_root_path }}; {% else %}
+    root /var/www/{{ dns_name }}; {% endif %}
     index index.html index.htm;
 
     location / {

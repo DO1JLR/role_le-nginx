@@ -1,5 +1,4 @@
 ---
-
 - name: Upgrade system
   become: yes
   apt: 
@@ -14,19 +13,21 @@
       - python-simplejson
       - nginx
       - python-pip
+      - python3-pip
 
 - name: Install specific packages
   become: yes
   package:
     name:
       - letsencrypt
-  when: gen_letsencrypt_certificate
+  when: gen_letsencrypt_certificate|bool
 
 - name: Install pyOpenSSL (PIP
   become: yes
   pip:
     name: 
       - pyOpenSSL
+    executable: pip3
 
 - name: install packages for basic auth
   become: yes

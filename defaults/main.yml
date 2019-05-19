@@ -1,5 +1,4 @@
 ---
-
 # TLS Config:
 letsencrypt_email: info@{{ ansible_hostname }}
 gen_letsencrypt_certificate: false
@@ -25,8 +24,12 @@ htpasswd:
   deny:
   - '192.168.1.0/22'
 
+custom_root: false
+# custom_root_path: /etc/foo
+
 # make proxy on http site
 http_make_proxy: false
+
 
 # copy you own custom certificate to the webserver
 # le_custom_certificate: 'certificate.crt' # this file should include the intermediate certificate too!
