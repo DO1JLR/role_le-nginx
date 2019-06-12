@@ -3,6 +3,15 @@
 [![Build Status](https://travis-ci.org/DO1JLR/role_le-nginx.svg?branch=master)](https://travis-ci.org/DO1JLR/role_le-nginx)
 Ansible Playbook for nginx and letsencrypt
 
+```
+WARNING
+
+THIS ROLE IS  A LITTLE BIT OUTDATED.
+PLEASE  BE CAREFULLY  BY  USING  IT.
+IT  IS  HIGHLY RECOMENDED  TO USE  A
+BETTER NGINX CONFIGURATION ROLE THAN
+THESE HERE!  REALLY!!!  DO  NOT  USE
+```
 
 ### Wichtig: Definiere folgende variable:
 
